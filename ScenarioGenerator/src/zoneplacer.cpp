@@ -18,7 +18,9 @@
  */
 
 #include "zoneplacer.h"
+#include "generatorsettings.h"
 #include "mapgenerator.h"
+#include "maptemplate.h"
 #include "randomgenerator.h"
 #include <algorithm>
 #include <cassert>
@@ -67,7 +69,7 @@ void ZonePlacer::placeZones(RandomGenerator* random)
     DistanceVector distances;
     DistanceVector overlaps;
 
-    static constexpr const int iterations{100};
+    int iterations = getGeneratorSettings().iterations;
     // Iterate until zones reach their desired size and fill map completely
     for (int i = 0; i < iterations; ++i) {
         // Attract connected zones

@@ -83,6 +83,8 @@ struct GeneratorSettings
 
     // Maximum tree image index that is supported by all races. From IsoTerrn.ff
     std::uint8_t maxTreeImageIndex{};
+    // Number of iterations for placing zones within an attempt
+    std::uint16_t iterations{};
 };
 
 bool readGeneratorSettings(const std::filesystem::path& gameFolderPath);

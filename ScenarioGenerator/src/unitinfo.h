@@ -37,6 +37,7 @@ public:
 
     virtual int getLevel() const = 0;
     virtual int getValue() const = 0;
+    virtual int getEnrollCost() const = 0;
 
     virtual UnitType getUnitType() const = 0;
     virtual SubRaceType getSubrace() const = 0;

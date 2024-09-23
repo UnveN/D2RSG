@@ -46,9 +46,14 @@ static std::string readFile(const std::filesystem::path& file)
     return std::string(std::istreambuf_iterator<char>(stream), std::istreambuf_iterator<char>());
 }
 
-static std::string readString(const sol::table& table, const char* name, const std::string& def)
+template <typename T>
+static T readValue(const sol::table& table,
+                   const char* name,
+                   T def,
+                   T min = std::numeric_limits<T>::min(),
+                   T max = std::numeric_limits<T>::max())
 {
-    return table.get_or(name, def);
+    return std::clamp<T>(table.get_or(name, def), min, max);
 }
 
 static void readStringSet(std::set<CMidgardID>& ids, const StringSet& stringSet)
@@ -62,6 +67,11 @@ static void readStringSet(std::set<CMidgardID>& ids, const StringSet& stringSet)
 
         ids.insert(unitId);
     }
+}
+
+static void readGeneratorOptions(const sol::table& table)
+{
+    generatorSettings.iterations = readValue(table, "iterations", 100, 100, 65535);
 }
 
 static void readForbiddenUnits(const sol::table& table)
@@ -184,6 +194,7 @@ static void readScriptSettings(sol::state& lua)
 {
     const sol::table& settings = lua["settings"];
 
+    readGeneratorOptions(settings);
     readForbiddenUnits(settings);
     readForbiddenItems(settings);
     readForbiddenSpells(settings);

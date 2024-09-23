@@ -2065,14 +2065,26 @@ Site* TemplateZone::placeMercenary(const Position& position, const MercenaryInfo
             return types->find(info->getSubrace()) == types->end();
         };
 
+        auto noForbiddenOnTemplate = [this](const UnitInfo* info) {
+            return contains(mapGenerator->mapGenOptions.mapTemplate->settings.forbiddenUnits,
+                            info->getUnitId());
+        };
+
         while (currentValue <= desiredValue) {
-            auto unit{pickUnit(rand, {noWrongType})};
+            const int remainingValue = desiredValue - currentValue;
+
+            auto noWrongValue = [remainingValue](const UnitInfo* info) {
+                return info->getEnrollCost() > remainingValue;
+            };
+
+            auto unit{pickUnit(rand, {noWrongType, noWrongValue, noForbiddenOnTemplate,
+                                      noForbiddenUnit})};
             if (!unit) {
                 // Could not pick anything, stop
                 break;
             }
 
-            currentValue += unit->getValue();
+            currentValue += unit->getEnrollCost();
             mercenary->addUnit(unit->getUnitId(), unit->getLevel(), true);
         }
     }
